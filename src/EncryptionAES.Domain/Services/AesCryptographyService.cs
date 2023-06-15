@@ -24,8 +24,8 @@ namespace EncryptionAES.Domain.Services
 
             using (MemoryStream memoryStream = new())
             {
-                using CryptoStream cryptoStream = new((Stream)memoryStream, encryptor, CryptoStreamMode.Write);
-                using (StreamWriter streamWriter = new((Stream)cryptoStream))
+                using CryptoStream cryptoStream = new(memoryStream, encryptor, CryptoStreamMode.Write);
+                using (StreamWriter streamWriter = new(cryptoStream))
                 {
                     streamWriter.Write(plaintext);
                 }
@@ -51,8 +51,8 @@ namespace EncryptionAES.Domain.Services
             ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
 
             using MemoryStream memoryStream = new(encryptedBytes);
-            using CryptoStream cryptoStream = new((Stream)memoryStream, decryptor, CryptoStreamMode.Read);
-            using StreamReader streamReader = new((Stream)cryptoStream);
+            using CryptoStream cryptoStream = new(memoryStream, decryptor, CryptoStreamMode.Read);
+            using StreamReader streamReader = new(cryptoStream);
             return streamReader.ReadToEnd();
         }
 
