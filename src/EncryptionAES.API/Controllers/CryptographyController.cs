@@ -1,5 +1,5 @@
-﻿using EncryptionAES.Domain.Command.Decrypt;
-using EncryptionAES.Domain.Command.Encrypt;
+﻿using EncryptionAES.Domain.Commands.Decrypt;
+using EncryptionAES.Domain.Commands.Encrypt;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

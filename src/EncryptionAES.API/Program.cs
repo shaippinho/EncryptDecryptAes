@@ -1,4 +1,4 @@
-using EncryptionAES.Domain.Command.Encrypt;
+using EncryptionAES.Domain.Commands.Encrypt;
 using MediatR;
 using System.Reflection;
 

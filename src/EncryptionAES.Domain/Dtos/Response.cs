@@ -1,4 +1,4 @@
-﻿namespace EncryptionAES.Domain.Dto
+﻿namespace EncryptionAES.Domain.Dtos
 {
     public class Response
     {
