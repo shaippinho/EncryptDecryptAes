@@ -1,14 +1,23 @@
-﻿using System.Security.Cryptography;
+﻿using EncryptionAES.Domain.Contracts;
+using EncryptionAES.KeyVault.Contracts;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace EncryptionAES.Domain.Services
 {
-    public static class AesCryptographyService
+    public class AesCryptographyService : IAesCryptographyService
     {
+        private readonly IKeyVaultService _keyVaultService;
 
-        private static readonly byte[] Key = Encoding.UTF8.GetBytes("8UHjPgXZzXCGkhxV2QCnooyJexUzvJrO"); // Chave secreta para criptografia AES
+        public AesCryptographyService(IKeyVaultService keyVaultService) 
+        { 
+            _keyVaultService = keyVaultService;
+        }
 
-        public static string Encrypt(string plaintext)
+
+        // Encoding.UTF8.GetBytes("8UHjPgXZzXCGkhxV2QCnooyJexUzvJrO"); // Chave secreta para criptografia AES
+
+        public async Task<string> EncryptAsync(string plaintext, CancellationToken cancellationToken)
         {
             byte[] iv = new byte[16];
             byte[] array;
@@ -16,7 +25,7 @@ namespace EncryptionAES.Domain.Services
             using Aes aes = Aes.Create();
             aes.IV = iv;
             aes.KeySize = 256;
-            aes.Key = Key;
+            aes.Key = Encoding.UTF8.GetBytes(await _keyVaultService.GetKeyVaultSecretAsync(cancellationToken));
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
 
@@ -36,15 +45,15 @@ namespace EncryptionAES.Domain.Services
             return Convert.ToBase64String(array);
         }
 
-        public static string Decrypt(string encryptedText)
+        public async Task<string> DecryptAsync(string plaintext, CancellationToken cancellationToken)
         {
             byte[] iv = new byte[16];
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+            byte[] encryptedBytes = Convert.FromBase64String(plaintext);
 
             using Aes aes = Aes.Create();
             aes.IV = iv;
             aes.KeySize = 256;
-            aes.Key = Key;
+            aes.Key = Encoding.UTF8.GetBytes(await _keyVaultService.GetKeyVaultSecretAsync(cancellationToken));
             aes.Mode = CipherMode.CBC;
             aes.Padding = PaddingMode.PKCS7;
 
@@ -55,6 +64,6 @@ namespace EncryptionAES.Domain.Services
             using StreamReader streamReader = new(cryptoStream);
             return streamReader.ReadToEnd();
         }
-
+        
     }
 }
